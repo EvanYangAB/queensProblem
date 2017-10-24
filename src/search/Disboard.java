@@ -24,15 +24,34 @@ public class Disboard {
 		Arrays.fill(board, Status.EMPTY);
 	}
 
+	// the final function for putting the queen into the array[][]
+	// col starts at 0
 	public int putQueen(int col, int row){
 		if(col < size && row < size){
 			queen[col] = row;
-
+			//set the queen
 
 			return 1;
 		}
 		else
 			return 0;
+	}
+
+	// col starts at 0
+	// predicate h function
+	// time function O(n)
+	public int assumeQueenAt(int col, int row){
+		int count = 0;
+		for(int i = col + 1; i < size; i++)
+			if(board[row][i] == Status.EMPTY)
+				count += 1;
+		for(int i = 1; col + i < size && row + i < size; i++)
+			if(board[row + i][col + i] == Status.EMPTY)
+				count += 1;
+		for(int i = 1; col + i < size && row - i >= 0; i++)
+			if(board[row - i][col + i] == Status.EMPTY)
+				count += 1;
+		return count;
 	}
 
 	public int getCrossUpdate(){
