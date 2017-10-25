@@ -19,29 +19,31 @@ public class Node {
 	}
 
 	public Node(int depthIn, Disboard gridIn){
-		depth = depthIn + 1;
+		depth = depthIn;
 		grid = gridIn;
-		queenRow = -1;
+		queenRow = 0;
 	}
 
 	public static void operator() throws Exception{
+		System.out.println("starting operation");
 		while(!queue.isEmpty()){
+			System.out.println("moving a node from stack");
 			Node current = queue.get(0);
 			queue.remove(0);
-			Disboard newBoard;
-			if(current.queenRow >= 0)
-				newBoard = current.grid.putQueen(current.queenRow, current.depth - 1);
-			else
-				newBoard = current.grid;
+			Disboard curBoard = current.grid;
+			System.out.println(curBoard);
 			// goal check
-			if(current.depth == newBoard.size){
-				System.out.println(newBoard);
+			if(current.depth == curBoard.size){
+				System.out.println("goal found");
+				System.out.println(curBoard);
 				return;
 			}
+			System.out.println("generating next level nodes");
+			System.out.println("at depth:"+ current.depth);
 			for(int i = 0; i <current.grid.size; i++)
-				if(newBoard.at(i, current.depth) == Status.EMPTY)
-					queue.add(new Node(current.depth, newBoard, i));
-			
+				if(curBoard.at(i, current.depth) == Status.EMPTY)
+					queue.add(new Node(current.depth + 1, current.grid.putQueen(i, current.depth), i));
+
 			queue.sort(Node::depthThenCross);
 		}
 	}
@@ -49,9 +51,9 @@ public class Node {
 	// sort method
 	static int depthThenCross(Node n1, Node n2){
 		return n1.depth - n2.depth == 0 ?
-			n1.grid.assumeQueenAt(n1.queenRow, n1.depth) - 
-			n2.grid.assumeQueenAt(n2.queenRow, n2.depth) :
-			n1.depth - n2.depth;
+			n1.grid.getCrossUpdate() - 
+			n2.grid.getCrossUpdate() :
+			n2.depth - n1.depth;
 	}
 
 	public static void addToQue(Node n){

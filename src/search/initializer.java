@@ -4,9 +4,10 @@ import search.*;
 
 public class initializer {
 	public static void initialize() throws Exception{
-		Disboard emptyBoard = new Disboard(4);
+		Disboard emptyBoard = new Disboard(8);
 		Node newNode = new Node(0, emptyBoard);
 		Node.addToQue(newNode);
+		System.out.println("prep phase done");
 		Node.operator();
 	}
 

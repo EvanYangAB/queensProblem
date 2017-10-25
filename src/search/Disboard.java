@@ -15,31 +15,45 @@ public class Disboard {
 
 	// empty board
 	public Disboard(int boardSize){
-		int size = boardSize;
+		size = boardSize;
 		board = new Status[size][size];
-		Arrays.fill(board, Status.EMPTY);
+		for(int i = 0; i< size; i++)
+			Arrays.fill(board[i], Status.EMPTY);
 	}
 
 	// return a new disboard with a queen
 	// placed at row, col
 	public Disboard putQueen(int row, int col) throws Exception{
+		numCrossAfterLastMove = 0;
 		Disboard newBoard = new Disboard(size);
 		newBoard.board = Arrays.stream(board)
 						.map((Status[] rows) -> rows.clone())
 						.toArray(Status[][]::new);
-		if(col < size && row < size && board[col][row] == Status.EMPTY){
+		if(col < size && row < size && board[row][col] == Status.EMPTY){
 			// set the queen
 			newBoard.board[row][col] = Status.QUEEN;
 			for(int i = col + 1; i < size; i++)
-				newBoard.board[row][i] = Status.CROSS;
+				if(newBoard.board[row][i] != Status.CROSS){
+					newBoard.board[row][i] = Status.CROSS;
+					numCrossAfterLastMove += 1;
+				}
 			for(int i = 1; col + i < size && row + i < size; i++)
-				newBoard.board[row + i][col + i] = Status.CROSS;
+				if(newBoard.board[row + i][col + i] != Status.CROSS){
+					newBoard.board[row + i][col + i] = Status.CROSS;
+					numCrossAfterLastMove += 1;
+				}
 			for(int i = 1; col + i < size && row - i >= 0; i++)
-				newBoard.board[row - 1][col + i] = Status.CROSS;
+				if(newBoard.board[row - i][col + i] != Status.CROSS){
+					newBoard.board[row - i][col + i] = Status.CROSS;
+					numCrossAfterLastMove += 1;
+				}
 			return newBoard;
 		}
-		else
+		else{
+			System.out.println("size:" + size + " row:" + (row + 1) + " col:" + (col + 1));
+			System.out.println(this);
 			throw new Exception("wrong index number in putting queen");
+		}
 	}
 
 	public Status at(int row, int col){
@@ -65,8 +79,8 @@ public class Disboard {
 		return count;
 	}
 
-	public int getCrossUpdate(int row, int col){
-		return assumeQueenAt(col, row);
+	public int getCrossUpdate(){
+		return numCrossAfterLastMove;
 	}
 
 	public String toString(){
@@ -75,13 +89,13 @@ public class Disboard {
 			for(int j = 0; j < size; j++)
 				switch (board[i][j]) {
 					case EMPTY:
-						result += "O";
+						result += "E|";
 						break;
 					case QUEEN:
-						result += "Q";
+						result += "Q|";
 						break;
 					case CROSS:
-						result += "X";
+						result += "X|";
 						break;
 					default:
 						result += "WTF is this?";
